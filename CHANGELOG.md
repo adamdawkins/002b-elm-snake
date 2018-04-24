@@ -1,3 +1,11 @@
+## [Version 0.1.0](https://github.com/adamdawkins/002b-elm-snake/releases/tag/v0.1.0) (2018-4-24)
+
+### Breaking changes
+
+- Snake moves in response to keyboard: [`79f34f1`](https://github.com/adamdawkins/002b-elm-snake/commit/79f34f1)
+
+[...full changes](https://github.com/adamdawkins/002b-elm-snake/compare/v0.0.1...v0.1.0)
+
 ## [Version 0.0.1](https://github.com/adamdawkins/002b-elm-snake/releases/tag/v0.0.1) (2018-4-24)
 
 ### Bug fixes
