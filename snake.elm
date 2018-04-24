@@ -1,8 +1,10 @@
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Debug exposing (..)
+import Debug exposing (log)
 import Time exposing (Time, second)
+import Keyboard exposing (downs, KeyCode)
+import Json.Decode as Json
 
 main =
   Html.program
@@ -27,64 +29,99 @@ dropLast list =
     xs -> 
       Just (List.reverse xs |> (List.drop 1) |> List.reverse)
 
--- initial model
 
-init : (Model, Cmd Msg)
-init =
-  let
-    origin = boardSize//2
-    body = origin - 1
-  in
-    (
-      { snake =
-          [ (origin, origin)
-          , (origin, body)
-          , (origin, body - 1)
-          ]
-      }
-    , Cmd.none
-    )
-
+-- the world
 type alias Snake = List (Int, Int)
 
 type alias Model =
   { snake : Snake
+  , direction : (Int, Int)
   }
 
+-- initial model
+init : (Model, Cmd Msg)
+init =
+  let
+    origin = (boardSize//2, boardSize//2)
+    direction = (1, 0)
+  in
+    (
+      { snake =
+          [ origin
+          , moveInDirection origin (-1, 0)
+          , moveInDirection origin (-2, 0)
+          ]
+      , direction = direction
+      }
+    , Cmd.none
+    )
+
+
 -- UPDATE
-type Msg
-  = Tick Time
+moveInDirection : (Int, Int) -> (Int, Int) -> (Int, Int)
+moveInDirection (x, y) (xV, yV) =
+  (x + xV, y + yV)
 
 moveSnake : Model -> Model
 moveSnake model =
   let
-    newHead = case List.head model.snake of
-      Nothing ->
-        (0,0)
-      Just (x, y) ->
-        if x == boardSize - 1 then
-          (0, y)
-        else
-          (x + 1, y)
+    head = Maybe.withDefault (0,0) (List.head model.snake)
     tail = Maybe.withDefault [] (dropLast model.snake)
+    (goalX, goalY) = moveInDirection head model.direction
+    newHead =
+      if goalX == boardSize then
+        (0, goalY)
+      else if goalY == boardSize then
+        (goalX, 0)
+      else if goalX == 0 then
+        (boardSize - 1, goalY)
+      else if goalY == 0 then
+        (goalX, boardSize - 1)
+      else
+        (goalX, goalY)
+
   in
     { model | snake = newHead :: tail }
 
-  
-          
+newDirection : Int -> Model -> Model 
+newDirection keyCode model =
+  case keyCode of
+    37 ->
+      -- log "left"
+      { model | direction = (-1, 0) }
+    38 ->
+      -- log "up"
+      { model | direction = (0, -1) }
+    39 ->
+      -- log "right"
+      { model | direction = (1, 0) }
+    40 ->
+      -- log "down"
+      { model | direction = (0, 1) }
+    _ ->
+      -- ignore all other keys
+      model
+
+type Msg
+  = Tick Time
+  | KeyDown KeyCode
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     Tick newTime ->
       (moveSnake model, Cmd.none)
+    KeyDown code ->
+      (newDirection code model ! [])
 
 
 -- SUBSCRIPTIONS
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  Time.every second Tick
-
+    Sub.batch
+        [ Time.every (150 * Time.millisecond) Tick
+        , downs KeyDown
+        ]
 
 -- VIEW 
 view model =
