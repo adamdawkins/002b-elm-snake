@@ -37,23 +37,25 @@ willCollide p1 p2 =
 
 
 -- helpers
-dropLast : List a -> Maybe (List a)
+dropLast : List a -> List a
 dropLast list =
   case list of 
     [] ->
-      Nothing
+      []
     [x] ->
-      Just [x]
+      []
     xs -> 
-      Just (List.reverse xs |> (List.drop 1) |> List.reverse)
+      List.reverse xs |> (List.drop 1) |> List.reverse
 
 
 -- the world
 type alias Point = (Int, Int)
-type alias Snake = List Point
 
 type alias Model =
-  { snake : Snake
+  { snake :
+    { head : Point
+    , tail : List Point
+    }
   , direction : Point
   , apple: Point
   }
@@ -67,16 +69,16 @@ init : (Model, Cmd Msg)
 init =
   let
     origin = (boardSize//2, boardSize//2)
-    direction = (1, 0)
-    snake =
-      [ origin
-      , addPoints origin (-1, 0)
-      , addPoints origin (-2, 0)
-      ]
   in
     (
-      { snake = snake
-      , direction = direction
+      { snake =
+        { head = origin
+        , tail =
+            [ addPoints origin (-1, 0)
+            , addPoints origin (-2, 0)
+            ]
+        }
+      , direction = (1, 0)
       , apple = (5, 5)
       }
     , Cmd.none
@@ -86,8 +88,8 @@ init =
 moveSnake : Model -> Model
 moveSnake model =
   let
-    head = Maybe.withDefault (0,0) (List.head model.snake)
-    tail = Maybe.withDefault [] (dropLast model.snake)
+    head = model.snake.head
+    tail = model.snake.head :: dropLast model.snake.tail
     (goalX, goalY) = addPoints head model.direction
     newHead =
       if goalX == boardSize then
@@ -100,9 +102,8 @@ moveSnake model =
         (goalX, boardSize - 1)
       else
         (goalX, goalY)
-
   in
-    { model | snake = newHead :: tail }
+    { model | snake = { head = newHead, tail = tail } }
 
 newDirection : Int -> Model -> Model 
 newDirection keyCode model =
@@ -140,10 +141,8 @@ update msg model =
   case msg of
     Tick newTime ->
       let
-          -- TODO: Separate the head and tail of the snake into a record so we can ditch this Maybe shit.
-          snakeHead = Maybe.withDefault (0,0) (List.head model.snake)
           cmd = 
-            if willCollide model.apple (addPoints snakeHead model.direction) then
+            if willCollide model.apple (addPoints model.snake.head model.direction) then
               Random.generate MoveApple randomPoint
             else
               Cmd.none
@@ -176,18 +175,21 @@ view model =
             , ("background", "#ccc")
             ]
         ]
-      [ viewSnake model
-      , viewApple model
-      ]
+        ( dot "blue" model.snake.head
+          :: dot "red" model.apple
+          :: List.map (dot "green") model.snake.tail
+        )
 
 viewSnake : Model -> Html msg
 viewSnake { snake } = 
-  div [] (List.indexedMap snakePart snake)
+  div []
+    (snakePart True snake.head :: (List.map (snakePart False) snake.tail))
+   
 
-snakePart : Int -> Point -> Html msg
-snakePart index (left, top) =
+snakePart : Bool -> Point -> Html msg
+snakePart isHead (left, top) =
   let
-      color = if index == 0 then "blue" else "green"
+      color = if isHead then "blue" else "green"
   in
     div [ style
         [ ( "position", "absolute" )
@@ -199,17 +201,15 @@ snakePart index (left, top) =
         ]
       ] []
 
-viewApple : Model -> Html msg
-viewApple { apple } =
-  let 
-      (left, top) = apple
-  in
-    div [ style
-        [ ( "position", "absolute" )
-        , ( "top", (toString <|  top * pixel) ++ "px")
-        , ( "left", (toString <| left * pixel) ++ "px")
-        , ( "width", toString pixel ++ "px")
-        , ( "height", toString pixel ++ "px")
-        , ( "background", "red")
-        ]
+dot : String -> Point -> Html msg
+dot color (left, top) =
+  div [ style
+    [ ( "position", "absolute" )
+    , ( "top", (toString <|  top * pixel) ++ "px")
+    , ( "left", (toString <| left * pixel) ++ "px")
+    , ( "width", toString pixel ++ "px")
+    , ( "height", toString pixel ++ "px")
+    , ( "background", color)
+    ]
   ] []
+
