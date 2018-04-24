@@ -1,3 +1,11 @@
+## [Version 0.3.0](https://github.com/adamdawkins/002b-elm-snake/releases/tag/v0.3.0) (2018-4-24)
+
+### Breaking changes
+
+- New apple generates after previous one is eaten: [`76b8f3e`](https://github.com/adamdawkins/002b-elm-snake/commit/76b8f3e)
+
+[...full changes](https://github.com/adamdawkins/002b-elm-snake/compare/v0.2.0...v0.3.0)
+
 ## [Version 0.2.0](https://github.com/adamdawkins/002b-elm-snake/releases/tag/v0.2.0) (2018-4-24)
 
 ### Breaking changes
