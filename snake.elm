@@ -31,16 +31,17 @@ dropLast list =
 
 
 -- the world
-type alias Snake = List (Int, Int)
+type alias Point = (Int, Int)
+type alias Snake = List Point
 
 type alias Model =
   { snake : Snake
-  , direction : (Int, Int)
-  , apple: (Int, Int)
+  , direction : Point
+  , apple: Point
   }
 
 
-allPoints : List (Int, Int)
+allPoints : List Point
 allPoints = List.map2 (,) (List.range 0 boardSize) (List.range 0 boardSize)
 
 -- initial model
@@ -64,16 +65,16 @@ init =
     )
 
 -- everywhere the snake isn't
-allFreeSpace : Model -> List (Int, Int)
+allFreeSpace : Model -> List Point
 allFreeSpace { snake } =
   let
-      notTheSnake : (Int, Int) -> Bool
+      notTheSnake : Point -> Bool
       notTheSnake x = not <| List.member x snake
   in
     List.filter notTheSnake allPoints  
 
 -- UPDATE
-moveInDirection : (Int, Int) -> (Int, Int) -> (Int, Int)
+moveInDirection : Point -> Point -> Point
 moveInDirection (x, y) (xV, yV) =
   (x + xV, y + yV)
 
@@ -159,7 +160,7 @@ viewSnake : Model -> Html msg
 viewSnake { snake } = 
   div [] (List.indexedMap snakePart snake)
 
-snakePart : Int -> (Int, Int) -> Html msg
+snakePart : Int -> Point -> Html msg
 snakePart index (left, top) =
   let
       color = if index == 0 then "blue" else "green"
