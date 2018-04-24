@@ -96,9 +96,9 @@ moveSnake model =
         (0, goalY)
       else if goalY == boardSize then
         (goalX, 0)
-      else if goalX == 0 then
+      else if goalX == -1 then
         (boardSize - 1, goalY)
-      else if goalY == 0 then
+      else if goalY == -1 then
         (goalX, boardSize - 1)
       else
         (goalX, goalY)
