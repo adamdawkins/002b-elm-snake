@@ -1,3 +1,11 @@
+## [Version 0.2.0](https://github.com/adamdawkins/002b-elm-snake/releases/tag/v0.2.0) (2018-4-24)
+
+### Breaking changes
+
+- Show an apple: [`0a8e6fe`](https://github.com/adamdawkins/002b-elm-snake/commit/0a8e6fe)
+
+[...full changes](https://github.com/adamdawkins/002b-elm-snake/compare/v0.1.0...v0.2.0)
+
 ## [Version 0.1.0](https://github.com/adamdawkins/002b-elm-snake/releases/tag/v0.1.0) (2018-4-24)
 
 ### Breaking changes
