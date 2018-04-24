@@ -3,7 +3,7 @@
 [x] Get a snake moving
 [x] Snake moves in reponse to keyboard direction
 [x] Show an apple
-[] new apple appears when apple is eaten
+[x] new apple appears when apple is eaten
 [] snake grows when eats apples
 [] Cannot turn in opposite direction
 [] game over when snake hits himself

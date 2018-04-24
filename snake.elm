@@ -1,3 +1,7 @@
+import Set exposing (..)
+import Array exposing (..)
+import Random exposing (..)
+
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -17,6 +21,20 @@ main =
 -- config
 pixel = 20
 boardSize = 20
+
+-- geometry
+distance : Point -> Point -> Float
+distance (x1, y1) (x2, y2) =
+  sqrt((toFloat x2 - toFloat x1)^2 + (toFloat y2 - toFloat y1)^2)
+
+addPoints : Point -> Point -> Point
+addPoints (x, y) (xV, yV) =
+  (x + xV, y + yV)
+
+willCollide : Point -> Point -> Bool
+willCollide p1 p2 =
+  distance p1 p2 == 0
+
 
 -- helpers
 dropLast : List a -> Maybe (List a)
@@ -52,8 +70,8 @@ init =
     direction = (1, 0)
     snake =
       [ origin
-      , moveInDirection origin (-1, 0)
-      , moveInDirection origin (-2, 0)
+      , addPoints origin (-1, 0)
+      , addPoints origin (-2, 0)
       ]
   in
     (
@@ -64,26 +82,13 @@ init =
     , Cmd.none
     )
 
--- everywhere the snake isn't
-allFreeSpace : Model -> List Point
-allFreeSpace { snake } =
-  let
-      notTheSnake : Point -> Bool
-      notTheSnake x = not <| List.member x snake
-  in
-    List.filter notTheSnake allPoints  
-
 -- UPDATE
-moveInDirection : Point -> Point -> Point
-moveInDirection (x, y) (xV, yV) =
-  (x + xV, y + yV)
-
 moveSnake : Model -> Model
 moveSnake model =
   let
     head = Maybe.withDefault (0,0) (List.head model.snake)
     tail = Maybe.withDefault [] (dropLast model.snake)
-    (goalX, goalY) = moveInDirection head model.direction
+    (goalX, goalY) = addPoints head model.direction
     newHead =
       if goalX == boardSize then
         (0, goalY)
@@ -118,17 +123,36 @@ newDirection keyCode model =
       -- ignore all other keys
       model
 
+
+randomPoint: Random.Generator Point
+randomPoint =
+  Random.pair (Random.int 0 (boardSize - 1)) (Random.int 0 (boardSize - 1)) 
+
+  
+
 type Msg
   = Tick Time
   | KeyDown KeyCode
+  | MoveApple Point
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     Tick newTime ->
-      (moveSnake model, Cmd.none)
+      let
+          -- TODO: Separate the head and tail of the snake into a record so we can ditch this Maybe shit.
+          snakeHead = Maybe.withDefault (0,0) (List.head model.snake)
+          cmd = 
+            if willCollide model.apple (addPoints snakeHead model.direction) then
+              Random.generate MoveApple randomPoint
+            else
+              Cmd.none
+      in
+        (moveSnake model, cmd)
     KeyDown code ->
       (newDirection code model ! [])
+    MoveApple point ->
+      ({ model | apple = point }, Cmd.none)
 
 
 -- SUBSCRIPTIONS
