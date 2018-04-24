@@ -61,10 +61,6 @@ type alias Model =
   }
 
 
-allPoints : List Point
-allPoints = List.map2 (,) (List.range 0 boardSize) (List.range 0 boardSize)
-
--- initial model
 init : (Model, Cmd Msg)
 init =
   let
@@ -85,6 +81,7 @@ init =
     )
 
 -- UPDATE
+
 -- handles the new position of the snake head, accounting for flipping to the other side of board
 newSnakeHead : Model -> Point
 newSnakeHead { snake, direction } =
@@ -127,11 +124,11 @@ randomPoint =
   Random.pair (Random.int 0 (boardSize - 1)) (Random.int 0 (boardSize - 1)) 
 
   
-
 type Msg
   = Tick Time
   | KeyDown KeyCode
   | MoveApple Point
+
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -183,27 +180,6 @@ view model =
           :: List.map (dot "green") model.snake.tail
         )
 
-viewSnake : Model -> Html msg
-viewSnake { snake } = 
-  div []
-    (snakePart True snake.head :: (List.map (snakePart False) snake.tail))
-   
-
-snakePart : Bool -> Point -> Html msg
-snakePart isHead (left, top) =
-  let
-      color = if isHead then "blue" else "green"
-  in
-    div [ style
-        [ ( "position", "absolute" )
-        , ( "top", (toString <|  top * pixel) ++ "px")
-        , ( "left", (toString <| left * pixel) ++ "px")
-        , ( "width", toString pixel ++ "px")
-        , ( "height", toString pixel ++ "px")
-        , ( "background", color)
-        ]
-      ] []
-
 dot : String -> Point -> Html msg
 dot color (left, top) =
   div [ style
@@ -215,4 +191,3 @@ dot color (left, top) =
     , ( "background", color)
     ]
   ] []
-
