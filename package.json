@@ -5,9 +5,13 @@
   "main": "index.js",
   "scripts": {
     "start": "elm-reactor",
+    "changelog": "./node_modules/.bin/changelog",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "changelog.md": "^1.1.0"
+  }
 }
