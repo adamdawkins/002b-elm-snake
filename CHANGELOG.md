@@ -1,3 +1,11 @@
+## [Version 0.4.1](https://github.com/adamdawkins/002b-elm-snake/releases/tag/v0.4.1) (2018-4-25)
+
+### Bug fixes
+
+- Delete extra whitespace / un-used code: [`111ed10`](https://github.com/adamdawkins/002b-elm-snake/commit/111ed10)
+
+[...full changes](https://github.com/adamdawkins/002b-elm-snake/compare/v0.4.0...v0.4.1)
+
 ## [Version 0.4.0](https://github.com/adamdawkins/002b-elm-snake/releases/tag/v0.4.0) (2018-4-25)
 
 ### Breaking changes
