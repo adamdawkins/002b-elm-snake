@@ -133,25 +133,26 @@ type Msg
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
-    Tick newTime ->
+    Tick _ ->
       let
-          newHead = newSnakeHead model
-          cmd = 
-            if willCollide model.apple newHead then
-              Random.generate MoveApple randomPoint
-            else
-              Cmd.none
-          newTail = 
-            if willCollide model.apple newHead then
-              model.snake.head :: model.snake.tail
-            else
-              model.snake.head :: dropLast model.snake.tail
+        newHead = newSnakeHead model
+        eatsApple = willCollide model.apple newHead
+        newTail = 
+          if eatsApple then
+            model.snake.head :: model.snake.tail
+          else
+            model.snake.head :: dropLast model.snake.tail
+        cmd =
+          if eatsApple then
+            Random.generate MoveApple randomPoint
+          else
+            Cmd.none
       in
-        ({ model | snake = { head = newHead, tail = newTail } }, cmd)
+        ({ model | snake = { head = newHead, tail = newTail }}, cmd)
     KeyDown code ->
-      (newDirection code model ! [])
+      (newDirection code model ! []) -- ! [] is shorthand for Cmd.none, sort of.
     MoveApple point ->
-      ({ model | apple = point }, Cmd.none)
+      ({ model | apple = point } ! [])
 
 
 -- SUBSCRIPTIONS
@@ -161,6 +162,7 @@ subscriptions model =
         [ Time.every (150 * Time.millisecond) Tick
         , downs KeyDown
         ]
+
 
 -- VIEW 
 view model =
