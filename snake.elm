@@ -85,25 +85,22 @@ init =
     )
 
 -- UPDATE
-moveSnake : Model -> Model
-moveSnake model =
-  let
-    head = model.snake.head
-    tail = model.snake.head :: dropLast model.snake.tail
-    (goalX, goalY) = addPoints head model.direction
-    newHead =
-      if goalX == boardSize then
-        (0, goalY)
-      else if goalY == boardSize then
-        (goalX, 0)
-      else if goalX == -1 then
-        (boardSize - 1, goalY)
-      else if goalY == -1 then
-        (goalX, boardSize - 1)
-      else
-        (goalX, goalY)
-  in
-    { model | snake = { head = newHead, tail = tail } }
+-- handles the new position of the snake head, accounting for flipping to the other side of board
+newSnakeHead : Model -> Point
+newSnakeHead { snake, direction } =
+  let 
+    (goalX, goalY) = addPoints snake.head direction
+  in 
+    if goalX == boardSize then
+      (0, goalY)
+    else if goalY == boardSize then
+      (goalX, 0)
+    else if goalX == -1 then
+      (boardSize - 1, goalY)
+    else if goalY == -1 then
+      (goalX, boardSize - 1)
+    else
+      (goalX, goalY)
 
 newDirection : Int -> Model -> Model 
 newDirection keyCode model =
@@ -141,13 +138,19 @@ update msg model =
   case msg of
     Tick newTime ->
       let
+          newHead = newSnakeHead model
           cmd = 
-            if willCollide model.apple (addPoints model.snake.head model.direction) then
+            if willCollide model.apple newHead then
               Random.generate MoveApple randomPoint
             else
               Cmd.none
+          newTail = 
+            if willCollide model.apple newHead then
+              model.snake.head :: model.snake.tail
+            else
+              model.snake.head :: dropLast model.snake.tail
       in
-        (moveSnake model, cmd)
+        ({ model | snake = { head = newHead, tail = newTail } }, cmd)
     KeyDown code ->
       (newDirection code model ! [])
     MoveApple point ->
