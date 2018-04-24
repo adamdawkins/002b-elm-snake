@@ -36,7 +36,12 @@ type alias Snake = List (Int, Int)
 type alias Model =
   { snake : Snake
   , direction : (Int, Int)
+  , apple: (Int, Int)
   }
+
+
+allPoints : List (Int, Int)
+allPoints = List.map2 (,) (List.range 0 boardSize) (List.range 0 boardSize)
 
 -- initial model
 init : (Model, Cmd Msg)
@@ -44,18 +49,28 @@ init =
   let
     origin = (boardSize//2, boardSize//2)
     direction = (1, 0)
+    snake =
+      [ origin
+      , moveInDirection origin (-1, 0)
+      , moveInDirection origin (-2, 0)
+      ]
   in
     (
-      { snake =
-          [ origin
-          , moveInDirection origin (-1, 0)
-          , moveInDirection origin (-2, 0)
-          ]
+      { snake = snake
       , direction = direction
+      , apple = (5, 5)
       }
     , Cmd.none
     )
 
+-- everywhere the snake isn't
+allFreeSpace : Model -> List (Int, Int)
+allFreeSpace { snake } =
+  let
+      notTheSnake : (Int, Int) -> Bool
+      notTheSnake x = not <| List.member x snake
+  in
+    List.filter notTheSnake allPoints  
 
 -- UPDATE
 moveInDirection : (Int, Int) -> (Int, Int) -> (Int, Int)
@@ -136,7 +151,9 @@ view model =
             , ("background", "#ccc")
             ]
         ]
-      [ viewSnake model ]
+      [ viewSnake model
+      , viewApple model
+      ]
 
 viewSnake : Model -> Html msg
 viewSnake { snake } = 
@@ -156,3 +173,18 @@ snakePart index (left, top) =
         , ( "background", color)
         ]
       ] []
+
+viewApple : Model -> Html msg
+viewApple { apple } =
+  let 
+      (left, top) = apple
+  in
+    div [ style
+        [ ( "position", "absolute" )
+        , ( "top", (toString <|  top * pixel) ++ "px")
+        , ( "left", (toString <| left * pixel) ++ "px")
+        , ( "width", toString pixel ++ "px")
+        , ( "height", toString pixel ++ "px")
+        , ( "background", "red")
+        ]
+  ] []
