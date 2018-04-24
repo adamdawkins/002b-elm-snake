@@ -1,3 +1,11 @@
+## [Version 0.3.1](https://github.com/adamdawkins/002b-elm-snake/releases/tag/v0.3.1) (2018-4-25)
+
+### Bug fixes
+
+- Fix: Allow snake to reach top and left edge of board: [`0ce5063`](https://github.com/adamdawkins/002b-elm-snake/commit/0ce5063)
+
+[...full changes](https://github.com/adamdawkins/002b-elm-snake/compare/v0.3.0...v0.3.1)
+
 ## [Version 0.3.0](https://github.com/adamdawkins/002b-elm-snake/releases/tag/v0.3.0) (2018-4-24)
 
 ### Breaking changes
