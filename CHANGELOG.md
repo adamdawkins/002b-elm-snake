@@ -1,3 +1,11 @@
+## [Version 0.4.0](https://github.com/adamdawkins/002b-elm-snake/releases/tag/v0.4.0) (2018-4-25)
+
+### Breaking changes
+
+- Snake grows when eats apple (+ refactor): [`7df56be`](https://github.com/adamdawkins/002b-elm-snake/commit/7df56be)
+
+[...full changes](https://github.com/adamdawkins/002b-elm-snake/compare/v0.3.1...v0.4.0)
+
 ## [Version 0.3.1](https://github.com/adamdawkins/002b-elm-snake/releases/tag/v0.3.1) (2018-4-25)
 
 ### Bug fixes
