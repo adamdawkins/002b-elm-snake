@@ -1,3 +1,11 @@
+## [Version 1.0.0](https://github.com/adamdawkins/002b-elm-snake/releases/tag/v1.0.0) (2018-5-2)
+
+### New features
+
+- Keep score: [`8379268`](https://github.com/adamdawkins/002b-elm-snake/commit/8379268)
+
+[...full changes](https://github.com/adamdawkins/002b-elm-snake/compare/v0.4.2...v1.0.0)
+
 ## [Version 0.4.2](https://github.com/adamdawkins/002b-elm-snake/releases/tag/v0.4.2) (2018-5-2)
 
 ### New features
