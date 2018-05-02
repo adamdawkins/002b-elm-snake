@@ -5,6 +5,5 @@
 [x] Show an apple
 [x] new apple appears when apple is eaten
 [x] snake grows when eats apples
-[] Cannot turn in opposite direction
-[] game over when snake hits himself
+[x] game over when snake hits himself
 [] keep score

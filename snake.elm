@@ -35,6 +35,9 @@ willCollide : Point -> Point -> Bool
 willCollide p1 p2 =
   distance p1 p2 == 0
 
+listCollide : List Point -> Point -> Bool
+listCollide list point = List.any (willCollide point) list
+
 
 -- helpers
 dropLast : List a -> List a
@@ -58,6 +61,7 @@ type alias Model =
     }
   , direction : Point
   , apple: Point
+  , isAlive: Bool
   }
 
 
@@ -76,6 +80,7 @@ init =
         }
       , direction = (1, 0)
       , apple = (5, 5)
+      , isAlive = True
       }
     , Cmd.none
     )
@@ -142,13 +147,25 @@ update msg model =
             model.snake.head :: model.snake.tail
           else
             model.snake.head :: dropLast model.snake.tail
+        willCrash = listCollide newTail newHead
+        isAlive = model.isAlive && not willCrash
+        snake =
+          if isAlive then
+            { head = newHead, tail = newTail }
+          else
+            { head = (0, 0), tail = [] }
         cmd =
           if eatsApple then
             Random.generate MoveApple randomPoint
           else
             Cmd.none
       in
-        ({ model | snake = { head = newHead, tail = newTail }}, cmd)
+        (
+          { model
+          | snake = snake
+          , isAlive = isAlive
+          }
+        , cmd)
     KeyDown code ->
       (newDirection code model ! []) -- ! [] is shorthand for Cmd.none, sort of.
     MoveApple point ->
@@ -177,9 +194,14 @@ view model =
             , ("background", "#ccc")
             ]
         ]
-        ( dot "blue" model.snake.head
-          :: dot "red" model.apple
-          :: List.map (dot "green") model.snake.tail
+        (
+          if model.isAlive then
+            ( dot "blue" model.snake.head
+            :: dot "red" model.apple
+            :: List.map (dot "green") model.snake.tail
+            )
+          else
+            [ h1 [] [ text "GameOver" ] ]
         )
 
 dot : String -> Point -> Html msg
