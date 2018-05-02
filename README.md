@@ -6,4 +6,4 @@
 [x] new apple appears when apple is eaten
 [x] snake grows when eats apples
 [x] game over when snake hits himself
-[] keep score
+[x] keep score

@@ -62,6 +62,7 @@ type alias Model =
   , direction : Point
   , apple: Point
   , isAlive: Bool
+  , score: Int
   }
 
 
@@ -81,6 +82,7 @@ init =
       , direction = (1, 0)
       , apple = (5, 5)
       , isAlive = True
+      , score = 0
       }
     , Cmd.none
     )
@@ -154,6 +156,12 @@ update msg model =
             { head = newHead, tail = newTail }
           else
             { head = (0, 0), tail = [] }
+        score =
+          if eatsApple then
+            model.score + 10
+          else
+            model.score
+
         cmd =
           if eatsApple then
             Random.generate MoveApple randomPoint
@@ -164,6 +172,7 @@ update msg model =
           { model
           | snake = snake
           , isAlive = isAlive
+          , score = score
           }
         , cmd)
     KeyDown code ->
@@ -187,22 +196,25 @@ view model =
       width = boardSize * pixel
       height = width
   in
-      div [ style
-            [ ("position", "relative")
-            , ("height", toString height ++ "px")
-            , ("width",  toString width ++ "px")
-            , ("background", "#ccc")
-            ]
-        ]
-        (
-          if model.isAlive then
-            ( dot "blue" model.snake.head
-            :: dot "red" model.apple
-            :: List.map (dot "green") model.snake.tail
+      div []
+        [ div [ style
+              [ ("position", "relative")
+              , ("height", toString height ++ "px")
+              , ("width",  toString width ++ "px")
+              , ("background", "#ccc")
+              ]
+          ]
+            (
+              if model.isAlive then
+                ( dot "blue" model.snake.head
+                :: dot "red" model.apple
+                :: List.map (dot "green") model.snake.tail
+                )
+              else
+                [ h1 [] [ text "Game Over" ] ]
             )
-          else
-            [ h1 [] [ text "GameOver" ] ]
-        )
+        , div [] [ text ("Score: " ++ toString model.score )]
+        ]
 
 dot : String -> Point -> Html msg
 dot color (left, top) =
