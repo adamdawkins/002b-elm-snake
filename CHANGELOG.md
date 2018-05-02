@@ -1,3 +1,11 @@
+## [Version 0.4.2](https://github.com/adamdawkins/002b-elm-snake/releases/tag/v0.4.2) (2018-5-2)
+
+### New features
+
+- Game over when snake hits themself: [`3aab2b1`](https://github.com/adamdawkins/002b-elm-snake/commit/3aab2b1)
+
+[...full changes](https://github.com/adamdawkins/002b-elm-snake/compare/v0.4.1...v0.4.2)
+
 ## [Version 0.4.1](https://github.com/adamdawkins/002b-elm-snake/releases/tag/v0.4.1) (2018-4-25)
 
 ### Bug fixes
